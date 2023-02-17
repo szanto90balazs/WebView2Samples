@@ -2616,59 +2616,8 @@ namespace WebView2WpfBrowser
         // <OnPermissionRequested>
         void WebView_PermissionRequested(object sender, CoreWebView2PermissionRequestedEventArgs args)
         {
-            // Obtain a deferral for the event so that the CoreWebView2 doesn't examine
-            // the properties set on the event args until after the dialog is closed.
-            CoreWebView2Deferral deferral = args.GetDeferral();
-
-            System.Threading.SynchronizationContext.Current.Post((_) =>
-            {
-                using (deferral)
-                {
-                    try
-                    {
-                        // Do not save state to the profile so that the PermissionRequested
-                        // event is always raised and the app is in control of all
-                        // permission requests.
-                        args.SavesInProfile = false;
-                    }
-                    catch (NotImplementedException e)
-                    {
-                        Debug.WriteLine($"SavesInProfile is not available with this WebView2 Runtime version. Handle `NewBrowserVersionAvailable` to be notified when the Runtime can be updated: {e.Message}");
-                    }
-                    var cachedKey = (args.Uri, args.PermissionKind, args.IsUserInitiated);
-                    CoreWebView2PermissionState state = CoreWebView2PermissionState.Default;
-                    if (_cachedPermissions.ContainsKey(cachedKey))
-                    {
-                        state = _cachedPermissions[cachedKey]
-                            ? CoreWebView2PermissionState.Allow
-                            : CoreWebView2PermissionState.Deny;
-                    }
-                    else
-                    {
-                        string message = "An iframe has requested device permission for ";
-                        message += NameOfPermissionKind(args.PermissionKind) + " to the website at ";
-                        message += args.Uri + ".\n\nDo you want to grant permission?\n";
-                        message += args.IsUserInitiated ? "This request came from a user gesture." : "This request did not come from a user gesture.";
-                        var selection = MessageBox.Show(
-                            message, "Permission Request", MessageBoxButton.YesNoCancel);
-                        switch (selection)
-                        {
-                            case MessageBoxResult.Yes:
-                                state = CoreWebView2PermissionState.Allow;
-                                _cachedPermissions[cachedKey] = true;
-                                break;
-                            case MessageBoxResult.No:
-                                state = CoreWebView2PermissionState.Deny;
-                                _cachedPermissions[cachedKey] = false;
-                                break;
-                            case MessageBoxResult.Cancel:
-                                state = CoreWebView2PermissionState.Default;
-                                break;
-                        }
-                    }
-                    args.State = state;
-                }
-            }, null);
+            args.State = CoreWebView2PermissionState.Allow;
+            args.Handled = true;
         }
         // </OnPermissionRequested>
 
