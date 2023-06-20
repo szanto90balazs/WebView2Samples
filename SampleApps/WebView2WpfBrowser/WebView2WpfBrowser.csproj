@@ -1,14 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFrameworks>netcoreapp3.0;net462</TargetFrameworks>
-    <UseWPF>true</UseWPF>
+	  <OutputType>WinExe</OutputType>
+	  <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
+	  <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+	  <UseWPF>true</UseWPF>
+	  <Platforms>x64;x86</Platforms>
     <Authors>Hybrid Application Team</Authors>
     <Company>Microsoft</Company>
     <Product>WebView2 WPF Sample Browser App</Product>
     <Copyright>Copyright ©2020</Copyright>
     <NoWin32Manifest>true</NoWin32Manifest>
-    <Configurations>Debug Stable APIs;Release Stable APIs;Debug Experimental APIs;Release Experimental APIs</Configurations>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Debug Experimental APIs'">
 	<DefineConstants>USE_WEBVIEW2_EXPERIMENTAL</DefineConstants>
